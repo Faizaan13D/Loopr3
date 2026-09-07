@@ -397,6 +397,53 @@
   .form-error.show{display:block;}
   .btn[disabled]{opacity:0.65;cursor:not-allowed;}
 
+  /* ---- Signup gate ---- */
+  #gate{
+    position:fixed;inset:0;z-index:200;background:var(--ink);
+    display:grid;grid-template-columns:1fr 1fr;overflow-y:auto;
+  }
+  #gate.hidden{display:none;}
+  body.gated{overflow:hidden;}
+  .gate-brand{
+    padding:56px 52px;display:flex;flex-direction:column;justify-content:center;
+    position:relative;overflow:hidden;
+  }
+  .gate-brand::before{
+    content:"";position:absolute;top:-140px;left:-120px;width:520px;height:520px;border-radius:50%;
+    background:radial-gradient(circle at center, rgba(138,58,255,0.42), transparent 70%);pointer-events:none;
+  }
+  .gate-brand > *{position:relative;z-index:1;}
+  .gate-brand h2{color:#fff;font-size:clamp(26px,2.6vw,36px);margin:22px 0 14px;}
+  .gate-brand p{color:var(--text-light-muted);font-size:16px;max-width:400px;}
+  .gate-points{list-style:none;padding:0;margin:30px 0 0;}
+  .gate-points li{
+    display:flex;align-items:flex-start;gap:12px;color:var(--text-light);
+    font-size:15px;margin-bottom:16px;
+  }
+  .gate-points li span.tick{
+    width:22px;height:22px;border-radius:50%;background:rgba(138,58,255,0.25);color:var(--accent-hi);
+    display:flex;align-items:center;justify-content:center;flex-shrink:0;margin-top:1px;
+  }
+  .gate-panel{
+    background:var(--paper);padding:56px 52px;display:flex;flex-direction:column;justify-content:center;
+  }
+  .gate-card{width:100%;max-width:420px;margin:0 auto;}
+  .gate-card h1{font-size:clamp(26px,2.4vw,32px);margin-bottom:8px;}
+  .gate-card > p.sub{color:var(--text-muted);font-size:15px;margin-bottom:28px;}
+  .gate-skip{
+    margin-top:22px;text-align:center;font-size:14px;color:var(--text-muted);
+  }
+  .gate-skip button{
+    background:none;border:none;color:var(--accent);font-weight:600;font-size:14px;
+    text-decoration:underline;padding:4px;
+  }
+  .gate-fineprint{margin-top:18px;font-size:12.5px;color:var(--text-muted);text-align:center;line-height:1.5;}
+  @media (max-width:880px){
+    #gate{grid-template-columns:1fr;}
+    .gate-brand{display:none;}
+    .gate-panel{padding:40px 24px;min-height:100vh;}
+  }
+
   /* reveal on scroll */
   .reveal{opacity:0;transform:translateY(18px);transition:opacity .6s ease, transform .6s ease;}
   .reveal.in{opacity:1;transform:translateY(0);}
@@ -445,6 +492,58 @@
     <a href="#/contact" class="btn btn-primary btn-block" data-link>Request a Quote</a>
   </div>
 </header>
+
+<div id="gate" class="hidden" role="dialog" aria-modal="true" aria-labelledby="gateHeading">
+  <div class="gate-brand">
+    <img src="" alt="Loopr logo" class="logo-icon-img" id="gateLogo" style="width:52px;height:52px;border-radius:14px;">
+    <h2>Automation that keeps your business moving.</h2>
+    <p>Create a free account and we'll put together a short list of the workflows most worth automating in your business.</p>
+    <ul class="gate-points">
+      <li><span class="tick">✓</span> A no-obligation look at where you're losing time</li>
+      <li><span class="tick">✓</span> Built for local Twin Cities businesses</li>
+      <li><span class="tick">✓</span> No technical knowledge needed</li>
+    </ul>
+  </div>
+  <div class="gate-panel">
+    <div class="gate-card">
+      <div class="form-success" id="gateSuccess">Thanks — you're all set. We'll reach out shortly.</div>
+      <div class="form-error" id="gateError">Something went wrong. Please try again, or email us at <a href="mailto:looprhelp@gmail.com" style="color:inherit;text-decoration:underline;">looprhelp@gmail.com</a>.</div>
+      <h1 id="gateHeading">Create your account</h1>
+      <p class="sub">Tell us a little about your business to get started.</p>
+      <form id="gateForm" novalidate>
+        <input type="hidden" name="_subject" value="New account signup — Loopr website">
+        <input type="hidden" name="_template" value="table">
+        <input type="hidden" name="_captcha" value="false">
+        <input type="text" name="_honey" style="display:none" tabindex="-1" autocomplete="off">
+        <div class="field" data-field="name">
+          <label for="g-name">Your Name</label>
+          <input id="g-name" name="name" type="text" autocomplete="name">
+          <span class="err-msg">Please enter your name.</span>
+        </div>
+        <div class="field" data-field="business">
+          <label for="g-business">Business Name</label>
+          <input id="g-business" name="business" type="text" autocomplete="organization">
+          <span class="err-msg">Please enter your business name.</span>
+        </div>
+        <div class="field" data-field="email">
+          <label for="g-email">Email</label>
+          <input id="g-email" name="email" type="email" autocomplete="email">
+          <span class="err-msg">Please enter a valid email address.</span>
+        </div>
+        <div class="field" data-field="phone">
+          <label for="g-phone">Phone <span style="font-weight:400;color:var(--text-muted);">(optional)</span></label>
+          <input id="g-phone" name="phone" type="tel" autocomplete="tel">
+          <span class="err-msg">Please enter a valid phone number.</span>
+        </div>
+        <button type="submit" class="btn btn-primary btn-block" id="gateSubmitBtn">Create Account</button>
+      </form>
+      <div class="gate-skip">
+        <button type="button" id="gateSkipBtn">Browse the site instead</button>
+      </div>
+      <p class="gate-fineprint">By creating an account you agree to be contacted by Loopr about automating your business. We don't share your information.</p>
+    </div>
+  </div>
+</div>
 
 <main id="app"></main>
 
@@ -1210,10 +1309,105 @@ function initForm(){
   });
 }
 
+/* ---------------- Signup gate ----------------
+   Soft gate: shown once before the site on a visitor's first arrival.
+   This is LEAD CAPTURE, not authentication — there is no password and no
+   login, because a static site has no server to verify one against.
+   Submissions are emailed to looprhelp@gmail.com via FormSubmit, exactly
+   like the contact form. If you later add a real backend/auth provider
+   (Firebase, Auth0, Supabase, etc.), replace the fetch() call below. */
+const GATE_KEY = 'loopr_gate_done';
+const gateEl = document.getElementById('gate');
+
+function gateAlreadyPassed(){
+  /* localStorage lets the gate remember a returning visitor once the site is
+     hosted on a real domain. In sandboxed previews it may be unavailable,
+     in which case the gate simply shows once per page load. */
+  try { return localStorage.getItem(GATE_KEY) === '1'; }
+  catch(e){ return false; }
+}
+
+function markGatePassed(){
+  try { localStorage.setItem(GATE_KEY, '1'); } catch(e){ /* preview mode */ }
+}
+
+function dismissGate(){
+  gateEl.classList.add('hidden');
+  document.body.classList.remove('gated');
+  markGatePassed();
+}
+
+function initGate(){
+  if(!gateEl) return;
+
+  /* reuse the header logo image so the gate needs no second copy of it */
+  const headerLogo = document.querySelector('header .logo-icon-img');
+  const gateLogo = document.getElementById('gateLogo');
+  if(headerLogo && gateLogo) gateLogo.src = headerLogo.src;
+
+  if(gateAlreadyPassed()) return;
+
+  gateEl.classList.remove('hidden');
+  document.body.classList.add('gated');
+
+  document.getElementById('gateSkipBtn').addEventListener('click', dismissGate);
+
+  const form = document.getElementById('gateForm');
+  const success = document.getElementById('gateSuccess');
+  const errorBox = document.getElementById('gateError');
+  const submitBtn = document.getElementById('gateSubmitBtn');
+
+  const validators = {
+    name: v => v.trim().length > 1,
+    business: v => v.trim().length > 1,
+    email: v => /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(v.trim()),
+    phone: v => v.trim().length === 0 || /^[0-9()+\-.\s]{7,}$/.test(v.trim())
+  };
+
+  form.addEventListener('submit', (e)=>{
+    e.preventDefault();
+    errorBox.classList.remove('show');
+    let valid = true;
+    Object.keys(validators).forEach(name=>{
+      const input = form.querySelector(`[name="${name}"]`);
+      const field = form.querySelector(`[data-field="${name}"]`);
+      const ok = validators[name](input.value);
+      field.classList.toggle('error', !ok);
+      if(!ok) valid = false;
+    });
+    if(!valid) return;
+
+    submitBtn.disabled = true;
+    submitBtn.textContent = 'Creating account...';
+
+    fetch('https://formsubmit.co/ajax/looprhelp@gmail.com', {
+      method: 'POST',
+      headers: { 'Accept': 'application/json' },
+      body: new FormData(form)
+    })
+      .then(res => {
+        if(!res.ok) throw new Error('Request failed');
+        return res.json();
+      })
+      .then(() => {
+        form.style.display = 'none';
+        document.querySelector('.gate-skip').style.display = 'none';
+        success.classList.add('show');
+        setTimeout(dismissGate, 1400);
+      })
+      .catch(() => {
+        errorBox.classList.add('show');
+        submitBtn.disabled = false;
+        submitBtn.textContent = 'Create Account';
+      });
+  });
+}
+
 /* ---------------- Init ---------------- */
 document.getElementById('year').textContent = new Date().getFullYear();
 updateHeaderState();
 render();
+initGate();
 </script>
 </body>
 </html>
