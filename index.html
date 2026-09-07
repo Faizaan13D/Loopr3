@@ -390,6 +390,12 @@
     border-radius:12px;font-size:14.5px;font-weight:500;margin-bottom:20px;
   }
   .form-success.show{display:block;}
+  .form-error{
+    display:none;background:#FDECEC;border:1px solid #F3B8B5;color:#B4241D;padding:18px 20px;
+    border-radius:12px;font-size:14.5px;font-weight:500;margin-bottom:20px;
+  }
+  .form-error.show{display:block;}
+  .btn[disabled]{opacity:0.65;cursor:not-allowed;}
 
   /* reveal on scroll */
   .reveal{opacity:0;transform:translateY(18px);transition:opacity .6s ease, transform .6s ease;}
@@ -925,7 +931,12 @@ function contactPage(){
     <div class="wrap contact-grid">
       <div class="reveal">
         <div class="form-success" id="formSuccess">Thanks — your message has been received. We'll be in touch shortly to talk through your workflow.</div>
+        <div class="form-error" id="formError">Something went wrong sending your message. Please try again, or email us directly at <a href="mailto:looprhelp@gmail.com" style="color:inherit;text-decoration:underline;">looprhelp@gmail.com</a>.</div>
         <form id="contactForm" novalidate>
+          <input type="hidden" name="_subject" value="New quote request — Loopr website">
+          <input type="hidden" name="_template" value="table">
+          <input type="hidden" name="_captcha" value="false">
+          <input type="text" name="_honey" style="display:none" tabindex="-1" autocomplete="off">
           <div class="field" data-field="name">
             <label for="c-name">Name</label>
             <input id="c-name" name="name" type="text" autocomplete="name">
@@ -951,9 +962,7 @@ function contactPage(){
             <textarea id="c-message" name="message" rows="5"></textarea>
             <span class="err-msg">Let us know a bit about what you'd like to automate.</span>
           </div>
-          <!-- Form endpoint not yet connected. Point the "action" attribute or JS submit handler
-               below at your backend / form service (e.g. Formspree, a serverless function, etc.) -->
-          <button type="submit" class="btn btn-primary btn-block">Request a Quote</button>
+          <button type="submit" class="btn btn-primary btn-block" id="contactSubmitBtn">Request a Quote</button>
         </form>
       </div>
       <div class="reveal">
@@ -1149,6 +1158,8 @@ function initFilter(){
 function initForm(){
   const form = document.getElementById('contactForm');
   const success = document.getElementById('formSuccess');
+  const errorBox = document.getElementById('formError');
+  const submitBtn = document.getElementById('contactSubmitBtn');
   if(!form) return;
   const validators = {
     name: v => v.trim().length > 1,
@@ -1159,6 +1170,7 @@ function initForm(){
   };
   form.addEventListener('submit', (e)=>{
     e.preventDefault();
+    errorBox.classList.remove('show');
     let valid = true;
     Object.keys(validators).forEach(name=>{
       const input = form.querySelector(`[name="${name}"]`);
@@ -1168,9 +1180,33 @@ function initForm(){
       if(!ok) valid = false;
     });
     if(!valid) return;
-    /* No backend is connected yet — wire this up to your form endpoint of choice. */
-    form.style.display = 'none';
-    success.classList.add('show');
+
+    submitBtn.disabled = true;
+    submitBtn.textContent = 'Sending...';
+
+    /* Sends the form directly to looprhelp@gmail.com via FormSubmit (formsubmit.co) —
+       a free form-to-email relay that needs no backend, server, or API key.
+       IMPORTANT: the first time this form is submitted, FormSubmit sends a one-time
+       confirmation email to looprhelp@gmail.com — click "Activate Form" in that email
+       once, and every submission after that will land in the inbox automatically. */
+    fetch('https://formsubmit.co/ajax/looprhelp@gmail.com', {
+      method: 'POST',
+      headers: { 'Accept': 'application/json' },
+      body: new FormData(form)
+    })
+      .then(res => {
+        if(!res.ok) throw new Error('Request failed');
+        return res.json();
+      })
+      .then(() => {
+        form.style.display = 'none';
+        success.classList.add('show');
+      })
+      .catch(() => {
+        errorBox.classList.add('show');
+        submitBtn.disabled = false;
+        submitBtn.textContent = 'Request a Quote';
+      });
   });
 }
 
