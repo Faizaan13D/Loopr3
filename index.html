@@ -144,6 +144,37 @@
   nav.primary-nav a:hover{color:var(--accent-hi);background:rgba(138,58,255,0.14);}
   nav.primary-nav a.active{color:var(--accent-hi);background:rgba(138,58,255,0.22);}
   .nav-right{display:flex;align-items:center;gap:14px;}
+  .auth-btn{
+    background:none;border:none;color:var(--text-light-muted);font-size:15px;font-weight:600;
+    padding:10px 14px;border-radius:999px;transition:color .18s ease, background .18s ease;
+  }
+  .auth-btn:hover{color:var(--accent-hi);background:rgba(138,58,255,0.14);}
+  .account-chip{
+    display:none;align-items:center;gap:9px;padding:5px 6px 5px 12px;border-radius:999px;
+    background:rgba(138,58,255,0.16);border:1px solid rgba(138,58,255,0.38);
+  }
+  .account-chip.show{display:flex;}
+  .account-avatar{
+    width:26px;height:26px;border-radius:50%;flex-shrink:0;
+    background:linear-gradient(135deg,var(--accent),var(--accent-2));
+    color:#fff;font-size:12px;font-weight:700;
+    display:flex;align-items:center;justify-content:center;
+    font-family:'Plus Jakarta Sans',sans-serif;
+  }
+  .account-name{
+    color:var(--text-light);font-size:14px;font-weight:600;
+    max-width:130px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;
+  }
+  .account-chip .auth-btn{padding:7px 12px;font-size:13.5px;color:var(--accent-2);}
+  @media (max-width:1080px){ .account-name{display:none;} }
+  #mobileAuthArea .auth-btn{
+    display:block;width:100%;text-align:left;padding:16px 4px;font-size:19px;
+    color:var(--text-light);border-bottom:1px solid var(--line-dark);border-radius:0;
+  }
+  #mobileAuthArea .auth-btn:hover{background:none;color:var(--accent-hi);}
+  #mobileAuthArea .mobile-account-label{
+    display:block;padding:16px 4px 6px;font-size:14px;color:var(--text-light-muted);
+  }
   .hamburger{display:none;flex-direction:column;gap:5px;background:none;border:none;padding:8px;}
   .hamburger span{width:22px;height:2px;background:#fff;border-radius:2px;transition:transform .25s ease, opacity .25s ease;}
   .mobile-panel{
@@ -158,6 +189,8 @@
     nav.primary-nav{display:none;}
     .hamburger{display:flex;}
     .nav-right .btn-primary{display:none;}
+    .nav-right .auth-btn, .nav-right .account-chip{display:none;}
+    .nav-right .account-chip.show{display:none;}
   }
   @media (min-width:901px){ .hamburger{display:none;} }
 
@@ -477,6 +510,12 @@
       <a href="#/contact" data-link data-route="contact">Contact</a>
     </nav>
     <div class="nav-right">
+      <button type="button" class="auth-btn" id="signInBtn">Sign In</button>
+      <div class="account-chip" id="accountChip">
+        <span class="account-avatar" id="accountAvatar"></span>
+        <span class="account-name" id="accountName"></span>
+        <button type="button" class="auth-btn" id="logOutBtn">Log Out</button>
+      </div>
       <a href="#/contact" class="btn btn-primary" data-link>Get Started</a>
       <button class="hamburger" id="hamburgerBtn" aria-label="Open menu" aria-expanded="false">
         <span></span><span></span><span></span>
@@ -489,6 +528,7 @@
     <a href="#/services" data-link data-route="services">Services</a>
     <a href="#/listings" data-link data-route="listings">Listings</a>
     <a href="#/contact" data-link data-route="contact">Contact</a>
+    <div id="mobileAuthArea"></div>
     <a href="#/contact" class="btn btn-primary btn-block" data-link>Request a Quote</a>
   </div>
 </header>
@@ -1317,6 +1357,7 @@ function initForm(){
    like the contact form. If you later add a real backend/auth provider
    (Firebase, Auth0, Supabase, etc.), replace the fetch() call below. */
 const GATE_KEY = 'loopr_gate_done';
+const ACCOUNT_KEY = 'loopr_account';
 const gateEl = document.getElementById('gate');
 
 function gateAlreadyPassed(){
@@ -1329,6 +1370,70 @@ function gateAlreadyPassed(){
 
 function markGatePassed(){
   try { localStorage.setItem(GATE_KEY, '1'); } catch(e){ /* preview mode */ }
+}
+
+/* Signed-in state. Again: this is a saved lead, not an authenticated session.
+   Swap these three functions for your auth provider's session calls if you
+   add a real backend later. */
+let currentAccount = null;
+
+function loadAccount(){
+  try {
+    const raw = localStorage.getItem(ACCOUNT_KEY);
+    currentAccount = raw ? JSON.parse(raw) : null;
+  } catch(e){ /* preview mode — keep whatever is in memory */ }
+  return currentAccount;
+}
+
+function saveAccount(account){
+  currentAccount = account;
+  try { localStorage.setItem(ACCOUNT_KEY, JSON.stringify(account)); } catch(e){}
+  updateAuthUI();
+}
+
+function clearAccount(){
+  currentAccount = null;
+  try { localStorage.removeItem(ACCOUNT_KEY); } catch(e){}
+  updateAuthUI();
+}
+
+function initials(name){
+  return name.trim().split(/\s+/).slice(0,2).map(w=>w[0]).join('').toUpperCase();
+}
+
+function updateAuthUI(){
+  const signInBtn = document.getElementById('signInBtn');
+  const chip = document.getElementById('accountChip');
+  const mobileArea = document.getElementById('mobileAuthArea');
+
+  if(currentAccount){
+    signInBtn.style.display = 'none';
+    chip.classList.add('show');
+    document.getElementById('accountAvatar').textContent = initials(currentAccount.name);
+    document.getElementById('accountName').textContent = currentAccount.name.split(/\s+/)[0];
+    mobileArea.innerHTML =
+      `<span class="mobile-account-label">Signed in as ${currentAccount.name}</span>` +
+      `<button type="button" class="auth-btn" data-auth="logout">Log Out</button>`;
+  } else {
+    signInBtn.style.display = '';
+    chip.classList.remove('show');
+    mobileArea.innerHTML = `<button type="button" class="auth-btn" data-auth="signin">Sign In</button>`;
+  }
+}
+
+function openGate(){
+  const form = document.getElementById('gateForm');
+  form.style.display = '';
+  form.reset();
+  form.querySelectorAll('.field').forEach(f=>f.classList.remove('error'));
+  document.getElementById('gateSuccess').classList.remove('show');
+  document.getElementById('gateError').classList.remove('show');
+  document.querySelector('.gate-skip').style.display = '';
+  const btn = document.getElementById('gateSubmitBtn');
+  btn.disabled = false;
+  btn.textContent = 'Create Account';
+  gateEl.classList.remove('hidden');
+  document.body.classList.add('gated');
 }
 
 function dismissGate(){
@@ -1345,10 +1450,22 @@ function initGate(){
   const gateLogo = document.getElementById('gateLogo');
   if(headerLogo && gateLogo) gateLogo.src = headerLogo.src;
 
-  if(gateAlreadyPassed()) return;
+  loadAccount();
+  updateAuthUI();
 
-  gateEl.classList.remove('hidden');
-  document.body.classList.add('gated');
+  /* Sign In / Log Out — header (desktop) and mobile panel (delegated) */
+  document.getElementById('signInBtn').addEventListener('click', openGate);
+  document.getElementById('logOutBtn').addEventListener('click', ()=>{
+    clearAccount();
+    closeMobilePanel();
+  });
+  document.getElementById('mobileAuthArea').addEventListener('click', (e)=>{
+    const btn = e.target.closest('[data-auth]');
+    if(!btn) return;
+    closeMobilePanel();
+    if(btn.dataset.auth === 'logout') clearAccount();
+    else openGate();
+  });
 
   document.getElementById('gateSkipBtn').addEventListener('click', dismissGate);
 
@@ -1380,6 +1497,12 @@ function initGate(){
     submitBtn.disabled = true;
     submitBtn.textContent = 'Creating account...';
 
+    const account = {
+      name: form.querySelector('[name="name"]').value.trim(),
+      business: form.querySelector('[name="business"]').value.trim(),
+      email: form.querySelector('[name="email"]').value.trim()
+    };
+
     fetch('https://formsubmit.co/ajax/looprhelp@gmail.com', {
       method: 'POST',
       headers: { 'Accept': 'application/json' },
@@ -1390,6 +1513,7 @@ function initGate(){
         return res.json();
       })
       .then(() => {
+        saveAccount(account);
         form.style.display = 'none';
         document.querySelector('.gate-skip').style.display = 'none';
         success.classList.add('show');
@@ -1401,6 +1525,9 @@ function initGate(){
         submitBtn.textContent = 'Create Account';
       });
   });
+
+  /* Only auto-open on a visitor's first arrival */
+  if(!gateAlreadyPassed() && !currentAccount) openGate();
 }
 
 /* ---------------- Init ---------------- */
