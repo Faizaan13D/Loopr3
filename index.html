@@ -430,7 +430,52 @@
   .form-error.show{display:block;}
   .btn[disabled]{opacity:0.65;cursor:not-allowed;}
 
-  /* ---- Signup gate ---- */
+  /* ---- Pricing ---- */
+  .pricing-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:26px;align-items:stretch;}
+  @media (max-width:920px){ .pricing-grid{grid-template-columns:1fr;max-width:460px;margin:0 auto;} }
+  .price-card{
+    background:#fff;border:1px solid var(--line-light);border-radius:20px;padding:32px 28px;
+    display:flex;flex-direction:column;position:relative;
+    transition:transform .2s ease, box-shadow .2s ease;
+  }
+  .price-card:hover{transform:translateY(-4px);box-shadow:var(--shadow-soft);}
+  .price-card.featured{
+    border:2px solid var(--accent);box-shadow:0 24px 60px -30px rgba(138,58,255,0.55);
+  }
+  .price-badge{
+    position:absolute;top:-13px;left:28px;background:var(--accent);color:#fff;
+    font-size:12px;font-weight:700;letter-spacing:0.04em;text-transform:uppercase;
+    padding:6px 14px;border-radius:999px;
+  }
+  .price-card h3{font-size:22px;margin-bottom:6px;}
+  .price-card .tier-sub{color:var(--text-muted);font-size:14.5px;margin-bottom:22px;min-height:42px;}
+  .price-amount{
+    font-family:'Plus Jakarta Sans',sans-serif;font-weight:800;font-size:42px;color:var(--text-dark);
+    line-height:1;display:flex;align-items:baseline;gap:6px;
+  }
+  .price-amount .per{font-size:15px;font-weight:600;color:var(--text-muted);}
+  .price-note{font-size:13px;color:var(--text-muted);margin-top:8px;}
+  .price-features{list-style:none;padding:0;margin:26px 0 28px;flex-grow:1;}
+  .price-features li{
+    display:flex;align-items:flex-start;gap:10px;font-size:14.5px;color:var(--text-dark);
+    margin-bottom:13px;line-height:1.45;
+  }
+  .price-features li .tick{
+    width:19px;height:19px;border-radius:50%;background:rgba(138,58,255,0.13);color:var(--accent);
+    display:flex;align-items:center;justify-content:center;flex-shrink:0;margin-top:2px;
+    font-size:11px;font-weight:800;
+  }
+  .price-fineprint{
+    text-align:center;color:var(--text-muted);font-size:14px;margin-top:44px;
+    max-width:640px;margin-left:auto;margin-right:auto;
+  }
+  .pricing-note{
+    background:rgba(138,58,255,0.07);border:1px solid rgba(138,58,255,0.22);
+    border-radius:14px;padding:18px 22px;font-size:14.5px;color:var(--text-dark);
+    max-width:720px;margin:0 auto 44px;
+  }
+
+
   #gate{
     position:fixed;inset:0;z-index:200;background:var(--ink);
     display:grid;grid-template-columns:1fr 1fr;overflow-y:auto;
@@ -507,6 +552,7 @@
       <a href="#/about" data-link data-route="about">About</a>
       <a href="#/services" data-link data-route="services">Services</a>
       <a href="#/listings" data-link data-route="listings">Listings</a>
+      <a href="#/pricing" data-link data-route="pricing">Pricing</a>
       <a href="#/contact" data-link data-route="contact">Contact</a>
     </nav>
     <div class="nav-right">
@@ -527,6 +573,7 @@
     <a href="#/about" data-link data-route="about">About</a>
     <a href="#/services" data-link data-route="services">Services</a>
     <a href="#/listings" data-link data-route="listings">Listings</a>
+      <a href="#/pricing" data-link data-route="pricing">Pricing</a>
     <a href="#/contact" data-link data-route="contact">Contact</a>
     <div id="mobileAuthArea"></div>
     <a href="#/contact" class="btn btn-primary btn-block" data-link>Request a Quote</a>
@@ -610,6 +657,7 @@
         <a href="#/" data-link>Home</a>
         <a href="#/about" data-link>About</a>
         <a href="#/listings" data-link>Solutions</a>
+        <a href="#/pricing" data-link>Pricing</a>
         <a href="#/contact" data-link>Contact</a>
       </div>
       <div>
@@ -1057,6 +1105,128 @@ function listingsPage(){
   `;
 }
 
+/* ---- Pricing ----
+   PRICES BELOW ARE PLACEHOLDERS — replace the price-amount values and the
+   feature bullets in PLANS with your real numbers before going live.
+   The Stripe checkout links are real and already wired to the buttons. */
+const PLANS = [
+  {
+    name:'Starter',
+    sub:'For a business that wants one workflow handled well.',
+    price:'$XXX',
+    per:'/month',
+    note:'Replace with your Starter price',
+    featured:false,
+    features:[
+      'One automated workflow',
+      'Missed call recovery',
+      'Automatic lead follow-up',
+      'Setup and configuration included',
+      'Email support'
+    ],
+    link:'https://buy.stripe.com/bJedR95F7gICePKgrM7wA00'
+  },
+  {
+    name:'Growth',
+    sub:'For businesses juggling leads across calls, texts, and forms.',
+    price:'$XXX',
+    per:'/month',
+    note:'Replace with your Growth price',
+    featured:true,
+    features:[
+      'Everything in Starter',
+      'Multiple connected workflows',
+      'AI customer communication',
+      'Appointment & booking automation',
+      'Review follow-up requests',
+      'Priority support'
+    ],
+    link:'https://buy.stripe.com/14AeVd0kNake9vq1wS7wA01'
+  },
+  {
+    name:'Pro',
+    sub:'For businesses that want automation built around everything they do.',
+    price:'$XXX',
+    per:'/month',
+    note:'Replace with your Pro price',
+    featured:false,
+    features:[
+      'Everything in Growth',
+      'Custom AI automation',
+      'Workflows built to your process',
+      'Ongoing workflow optimization',
+      'Direct line for support and changes'
+    ],
+    link:'https://buy.stripe.com/eVq5kD8Rj9ga8rm5N87wA02'
+  }
+];
+
+function pricingPage(){
+  return `
+  <section class="page-hero on-dark">
+    <div class="wrap">
+      <div class="label">Pricing</div>
+      <h1>Simple pricing for simple automation.</h1>
+      <p class="lede">Pick the plan that matches how much of your business you want running on its own. Not sure which fits? Get in touch and we'll point you to the right one.</p>
+    </div>
+  </section>
+
+  <section>
+    <div class="wrap">
+      <div class="pricing-note reveal">
+        <strong>Note for Loopr:</strong> the prices shown below are placeholders. Replace the <code>price</code> and <code>features</code> values in the <code>PLANS</code> list before publishing. The Stripe checkout buttons are live and already connected.
+      </div>
+      <div class="pricing-grid">
+        ${PLANS.map(p=>`
+        <div class="price-card reveal${p.featured?' featured':''}">
+          ${p.featured?'<span class="price-badge">Most Popular</span>':''}
+          <h3>${p.name}</h3>
+          <p class="tier-sub">${p.sub}</p>
+          <div class="price-amount">${p.price}<span class="per">${p.per}</span></div>
+          <p class="price-note">${p.note}</p>
+          <ul class="price-features">
+            ${p.features.map(f=>`<li><span class="tick">✓</span>${f}</li>`).join('')}
+          </ul>
+          <a href="${p.link}" class="btn ${p.featured?'btn-primary':'btn-ghost'} btn-block" target="_blank" rel="noopener noreferrer">Choose ${p.name}</a>
+        </div>`).join('')}
+      </div>
+      <p class="price-fineprint reveal">Every plan starts with a conversation about how your business currently handles leads and customers, so the workflow is built around what you actually do. Plans can be changed as your business grows.</p>
+    </div>
+  </section>
+
+  <section style="background:var(--paper-2);">
+    <div class="wrap">
+      <div class="section-head reveal">
+        <div class="label">Questions about pricing</div>
+        <h2>Before you pick a plan.</h2>
+      </div>
+      <div class="grid-3">
+        <div class="value-card reveal">
+          <h3 style="font-size:17px;margin-bottom:8px;">Not sure which plan fits?</h3>
+          <p style="color:var(--text-muted);font-size:14.5px;">Tell us what's taking up your time and we'll recommend the plan that covers it — no pressure to size up.</p>
+        </div>
+        <div class="value-card reveal">
+          <h3 style="font-size:17px;margin-bottom:8px;">Can I change plans later?</h3>
+          <p style="color:var(--text-muted);font-size:14.5px;">Yes. Businesses often start with one workflow and add more once they see it working.</p>
+        </div>
+        <div class="value-card reveal">
+          <h3 style="font-size:17px;margin-bottom:8px;">Need something custom?</h3>
+          <p style="color:var(--text-muted);font-size:14.5px;">If your business doesn't fit neatly into a plan, reach out and we'll put together a quote around what you need.</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section class="final-cta on-dark">
+    <div class="wrap">
+      <h2>Still deciding?</h2>
+      <p class="lede" style="margin-top:14px;">Tell us what you're trying to automate and we'll help you figure out where to start — before you pay for anything.</p>
+      <a href="#/contact" class="btn btn-primary" data-link>Talk to Loopr</a>
+    </div>
+  </section>
+  `;
+}
+
 function contactPage(){
   return `
   <section class="page-hero on-dark">
@@ -1128,6 +1298,7 @@ const ROUTES = {
   about:{title:'About Loopr — Automation Made Simple', desc:'Loopr is a Shakopee, Minnesota automation company on a mission to make powerful AI workflows simple enough for every local business.', render:aboutPage},
   services:{title:'Services — AI Automation for Local Businesses | Loopr', desc:'From missed call recovery to lead follow-up and custom workflows, Loopr builds automation designed around your business.', render:servicesPage},
   listings:{title:'Automation Solutions | Loopr', desc:'Explore the automation solutions Loopr builds for local businesses across the Twin Cities, from lead automation to workflow automation.', render:listingsPage},
+  pricing:{title:'Pricing — Automation Plans for Local Businesses | Loopr', desc:'Straightforward monthly pricing for Loopr automation plans. Starter, Growth, and Pro options for businesses across the Twin Cities.', render:pricingPage},
   contact:{title:'Contact Loopr — Request a Quote', desc:'Based in Shakopee, Minnesota and serving the Twin Cities. Tell Loopr what you want to automate and request a quote today.', render:contactPage}
 };
 
