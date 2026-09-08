@@ -562,7 +562,7 @@
         <span class="account-name" id="accountName"></span>
         <button type="button" class="auth-btn" id="logOutBtn">Log Out</button>
       </div>
-      <a href="#/contact" class="btn btn-primary" data-link>Get Started</a>
+      <a href="#/pricing" class="btn btn-primary" data-link>Get Started</a>
       <button class="hamburger" id="hamburgerBtn" aria-label="Open menu" aria-expanded="false">
         <span></span><span></span><span></span>
       </button>
@@ -670,7 +670,7 @@
       <div>
         <h4>Ready to automate your workflow?</h4>
         <p class="footer-desc" style="margin-bottom:18px;">Tell us what's slowing your business down — we'll help you build a simpler way to handle it.</p>
-        <a href="#/contact" class="btn btn-primary" data-link>Get Started</a>
+        <a href="#/pricing" class="btn btn-primary" data-link>Get Started</a>
       </div>
     </div>
     <div class="footer-bottom">
@@ -740,7 +740,7 @@ function homePage(){
         <h1>Make your business work smarter.</h1>
         <p class="lede">Loopr builds AI-powered automated workflows that help Twin Cities businesses save time, respond faster, and turn more leads into customers.</p>
         <div class="hero-ctas">
-          <a href="#/contact" class="btn btn-primary" data-link>Get Started</a>
+          <a href="#packages" class="btn btn-primary" data-scroll>Get Started</a>
           <a href="#how-it-works" class="btn btn-ghost" data-scroll>See How It Works</a>
         </div>
         <div class="trust-line"><span class="dot-badge"></span> Built for local businesses in the Twin Cities</div>
@@ -923,11 +923,36 @@ function homePage(){
     </div>
   </section>
 
+  <section id="packages" style="background:var(--paper-2);">
+    <div class="wrap">
+      <div class="section-head reveal">
+        <div class="label">Packages</div>
+        <h2>Pick the package that fits your business.</h2>
+        <p class="lede" style="margin-top:14px;">Every package is set up for you and starts working right away. Choose one below, or talk to us first if you're not sure which fits.</p>
+      </div>
+      <div class="pricing-grid">
+        ${PLANS.map(p=>`
+        <div class="price-card reveal${p.featured?' featured':''}">
+          ${p.featured?'<span class="price-badge">Most Popular</span>':''}
+          <h3>${p.name}</h3>
+          <p class="tier-sub">${p.sub}</p>
+          <div class="price-amount">${p.price}<span class="per">${p.per}</span></div>
+          <p class="price-note">${p.note}</p>
+          <ul class="price-features">
+            ${p.features.map(f=>`<li><span class="tick">✓</span>${f}</li>`).join('')}
+          </ul>
+          <a href="${p.link}" class="btn ${p.featured?'btn-primary':'btn-ghost'} btn-block" target="_blank" rel="noopener noreferrer">Get Started</a>
+        </div>`).join('')}
+      </div>
+      <p class="price-fineprint reveal">Not sure which package you need? <a href="#/contact" data-link style="color:var(--accent);font-weight:600;">Tell us what's slowing you down</a> and we'll point you to the right one.</p>
+    </div>
+  </section>
+
   <section class="final-cta on-dark">
     <div class="wrap">
       <h2>Ready to make your workflow easier?</h2>
       <p class="lede" style="margin-top:14px;">Let's find the repetitive work slowing your business down and build a smarter way to handle it.</p>
-      <a href="#/contact" class="btn btn-primary" data-link>Get Started</a>
+      <a href="#packages" class="btn btn-primary" data-scroll>Get Started</a>
     </div>
   </section>
   `;
@@ -1111,52 +1136,49 @@ function listingsPage(){
 const PLANS = [
   {
     name:'Starter',
-    sub:'For a business that wants one workflow handled well.',
-    price:'$99',
+    sub:'For a business that wants missed calls captured and appointments booked.',
+    price:'$199',
     per:'/month',
     note:'Billed monthly. Cancel anytime.',
     featured:false,
     features:[
-      'One automated workflow',
-      'Missed call recovery',
-      'Automatic lead follow-up',
-      'Setup and configuration included',
-      'Email support'
+      'Missed-call recovery',
+      'CRM',
+      'Appointment booking',
+      'Setup and configuration included'
     ],
-    link:'https://buy.stripe.com/bJedR95F7gICePKgrM7wA00'
+    link:'https://buy.stripe.com/4gM3cv8RjfEy6jegrM7wA03'
   },
   {
-    name:'Growth',
-    sub:'For businesses juggling leads across calls, texts, and forms.',
-    price:'$199',
+    name:'Pro',
+    sub:'For businesses working a steady flow of leads that need following up.',
+    price:'$349',
     per:'/month',
     note:'Billed monthly. Cancel anytime.',
     featured:true,
     features:[
-      'Everything in Starter',
-      'Multiple connected workflows',
-      'AI customer communication',
-      'Appointment & booking automation',
-      'Review follow-up requests',
-      'Priority support'
+      'AI follow-up',
+      'Missed-call recovery',
+      'CRM',
+      'Reviews',
+      'Lead nurturing'
     ],
-    link:'https://buy.stripe.com/14AeVd0kNake9vq1wS7wA01'
+    link:'https://buy.stripe.com/7sY14naZr7827nia3o7wA04'
   },
   {
-    name:'Pro',
-    sub:'For businesses that want automation built around everything they do.',
-    price:'$299',
+    name:'Elite',
+    sub:'For businesses that want the phones answered and the whole process automated.',
+    price:'$599',
     per:'/month',
     note:'Billed monthly. Cancel anytime.',
     featured:false,
     features:[
-      'Everything in Growth',
-      'Custom AI automation',
-      'Workflows built to your process',
-      'Ongoing workflow optimization',
-      'Direct line for support and changes'
+      'AI receptionist',
+      'Advanced automation',
+      'Reporting',
+      'Reputation management'
     ],
-    link:'https://buy.stripe.com/eVq5kD8Rj9ga8rm5N87wA02'
+    link:'https://buy.stripe.com/00wbJ1c3vboi4b68Zk7wA05'
   }
 ];
 
@@ -1183,7 +1205,7 @@ function pricingPage(){
           <ul class="price-features">
             ${p.features.map(f=>`<li><span class="tick">✓</span>${f}</li>`).join('')}
           </ul>
-          <a href="${p.link}" class="btn ${p.featured?'btn-primary':'btn-ghost'} btn-block" target="_blank" rel="noopener noreferrer">Choose ${p.name}</a>
+          <a href="${p.link}" class="btn ${p.featured?'btn-primary':'btn-ghost'} btn-block" target="_blank" rel="noopener noreferrer">Get Started with ${p.name}</a>
         </div>`).join('')}
       </div>
       <p class="price-fineprint reveal">Every plan starts with a conversation about how your business currently handles leads and customers, so the workflow is built around what you actually do. Plans can be changed as your business grows.</p>
