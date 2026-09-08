@@ -1106,16 +1106,15 @@ function listingsPage(){
 }
 
 /* ---- Pricing ----
-   PRICES BELOW ARE PLACEHOLDERS — replace the price-amount values and the
-   feature bullets in PLANS with your real numbers before going live.
-   The Stripe checkout links are real and already wired to the buttons. */
+   Prices are live. The Stripe checkout links below are real — verify each one
+   points at the matching plan in your Stripe dashboard before promoting the page. */
 const PLANS = [
   {
     name:'Starter',
     sub:'For a business that wants one workflow handled well.',
-    price:'$XXX',
+    price:'$199',
     per:'/month',
-    note:'Replace with your Starter price',
+    note:'Billed monthly. Cancel anytime.',
     featured:false,
     features:[
       'One automated workflow',
@@ -1129,9 +1128,9 @@ const PLANS = [
   {
     name:'Growth',
     sub:'For businesses juggling leads across calls, texts, and forms.',
-    price:'$XXX',
+    price:'$349',
     per:'/month',
-    note:'Replace with your Growth price',
+    note:'Billed monthly. Cancel anytime.',
     featured:true,
     features:[
       'Everything in Starter',
@@ -1146,9 +1145,9 @@ const PLANS = [
   {
     name:'Pro',
     sub:'For businesses that want automation built around everything they do.',
-    price:'$XXX',
+    price:'$499',
     per:'/month',
-    note:'Replace with your Pro price',
+    note:'Billed monthly. Cancel anytime.',
     featured:false,
     features:[
       'Everything in Growth',
@@ -1173,9 +1172,6 @@ function pricingPage(){
 
   <section>
     <div class="wrap">
-      <div class="pricing-note reveal">
-        <strong>Note for Loopr:</strong> the prices shown below are placeholders. Replace the <code>price</code> and <code>features</code> values in the <code>PLANS</code> list before publishing. The Stripe checkout buttons are live and already connected.
-      </div>
       <div class="pricing-grid">
         ${PLANS.map(p=>`
         <div class="price-card reveal${p.featured?' featured':''}">
